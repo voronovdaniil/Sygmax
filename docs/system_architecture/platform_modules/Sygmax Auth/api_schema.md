@@ -103,7 +103,7 @@ def register_user():
 
 ```
 
-### Вход ы систему:
+### Вход систему:
 ```
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import BadRequest, Unauthorized
