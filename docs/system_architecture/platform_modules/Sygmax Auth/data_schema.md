@@ -13,7 +13,6 @@
 | `email_confirmed`   | `BOOLEAN`           | Подтвержден ли email |
 | `default_workspace_id` | `UUID (FK)`       | ID автоматически созданного личного воркспейса |
 | `workspace_url`      | `VARCHAR(255) UNIQUE` | Уникальная ссылка на персональный воркспейс |
-
 | `created_at`        | `TIMESTAMP`         | Дата регистрации |
 | `last_login`        | `TIMESTAMP`         | Дата последнего входа в систему |
 | `login_attempts`    | `INTEGER DEFAULT 0` | Количество неудачных попыток входа |
