@@ -37,6 +37,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Sygmax Core apps
+    'sygmax_core.auth.apps.AuthConfig',
+    'sygmax_core.workspaces.apps.WorkspacesConfig',
+    'sygmax_core.profiles.apps.ProfilesConfig',
+    'sygmax_core.teamspaces.apps.TeamspacesConfig',
+    
+    # Sygmax Services
+    'sygmax_core.ai_assistance_service.apps.AiAssistanceServiceConfig',
+    'sygmax_core.cache_service.apps.CacheServiceConfig',
+    'sygmax_core.collaboration_service.apps.CollaborationServiceConfig',
+    'sygmax_core.editor_service.apps.EditorServiceConfig',
+    'sygmax_core.file_service.apps.FileServiceConfig',
+    'sygmax_core.import_export_service.apps.ImportExportServiceConfig',
+    'sygmax_core.permissions_service.apps.PermissionsServiceConfig',
+    'sygmax_core.rendering_service.apps.RenderingServiceConfig',
+    'sygmax_core.versioning_service.apps.VersioningServiceConfig',
 ]
 
 MIDDLEWARE = [
