@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from ..workspaces.models import Workspace
 
 # Везде советуют вводить этот менеджер для кастомизации модели юзера
 class CustomUserManager(BaseUserManager):
@@ -55,17 +56,17 @@ class Role(models.Model):
         
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50,
-                            choises=RoleName.choices,
-                            unique=True,
-                            verbose_name='Название роли')
+                          choices=RoleName.choices,
+                          unique=True,
+                          verbose_name='Название роли')
     
     def __str__(self):
         return self.name
     
 class UserRole(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='roles')
-    role_id = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='users')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='roles')
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='users')
     
     class Meta:
         constraints = [
@@ -88,7 +89,7 @@ class OauthAccount(models.Model):
                              on_delete=models.CASCADE,
                              related_name='oauth_accounts')
     
-    provider = models.CharField(max_length=5, choices=Provider.choices)
+    provider = models.CharField(max_length=50, choices=Provider.choices)
     provider_id = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -99,7 +100,7 @@ class OauthAccount(models.Model):
 class TokensBlacklist(models.Model):
     token = models.TextField(primary_key=True, max_length=500, verbose_name='Токен')
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField()
+    expires_at = models.DateTimeField(verbose_name='Дата истечения токена')
     
     class Meta:
         verbose_name = 'Чёрный список токенов'
