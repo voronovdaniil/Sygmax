@@ -5,5 +5,4 @@ class AuthenticationConfig(AppConfig):
     name = 'apps.authentication'
 
     def ready(self):
-        # Импортируем модели только внутри ready()
-        from .infrastructure import models
+        import apps.authentication.infrastructure.models
