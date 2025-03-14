@@ -5,4 +5,7 @@ class AuthenticationConfig(AppConfig):
     name = 'apps.authentication'
 
     def ready(self):
-        import apps.authentication.infrastructure.models
+        try:
+            import apps.authentication.models
+        except ImportError:
+            pass

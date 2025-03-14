@@ -1,3 +1,3 @@
-from django.db import models
+from .infrastructure.models import UserProfile, Role, UserRole, LanguageChoices, ThemeChoices
 
-# Create your models here.
+__all__ = ['UserProfile', 'Role', 'UserRole', 'LanguageChoices', 'ThemeChoices']
