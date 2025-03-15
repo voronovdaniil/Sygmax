@@ -51,19 +51,22 @@
 
 ---
 
-| **Микросервис** | **Описание** | **Тип взаимодействия** | **БД** |
-| --- | --- | --- | --- |
-| **Workspace management Service** | Создание и управление workspace | REST/gRPC | PostgreSQL |
-| **Teamspace management Service** | Управление командами внутри Workspace | REST/gRPC | PostgreSQL |
-| **Editor Service** | Создание, редактирование, форматирование документов | REST/gRPC | PostgreSQL |
-| **File Service** | Загрузка, обработка и хранение айлов и медиа в предварительной и сохраненной версии документов | REST | Mino/S3 |
-| **Collaboration Service** | Совместное редактирование, WebSockets | WebSockets | Redis |
-| **Versioning Service** | История изменений, Git-подобная версионность форки, откаты к предыдущим версиям | REST/gRPC | PostgreSQL (JSONB) |
-| **Import/Export Service** | Конвертация (Markdown, LaTeX, PDF, Word) | REST | MinIO / S3 |
-| **Rendering Service** | Генерация предпросмотров, майндкарт, диаграмм | REST | Redis |
-| **Cache Service** | Кэширование документов, блоков, истории | Redis API | Redis |
-| **Permissions Service** | Права доступа в workspace/teamspace, роли, разграничение контента | REST/gRPC | PostgreSQL |
-| **AI Assistance Service** | Автокоррекция, стилистический анализ, NLP | Kafka / REST | PostgreSQL / FAISS |
+| **Микросервис**                | **Описание**                                                    | **Тип взаимодействия** | **БД**             |
+|---------------------------------|----------------------------------------------------------------|------------------------|--------------------|
+| **Authentication Service**      | Аутентификация, управление пользователями                      | REST                  | PostgreSQL        |
+| **Profile Service**             | Управление профилем пользователя (аватар, язык, настройки)    | REST                  | PostgreSQL        |
+| **Workspace Management Service**| Создание и управление workspace'ами                           | REST/gRPC             | PostgreSQL        |
+| **Teamspace Management Service**| Управление командами внутри Workspace                         | REST/gRPC             | PostgreSQL        |
+| **Editor Service**              | Создание, редактирование, форматирование документов           | REST/gRPC             | PostgreSQL        |
+| **File Service**                | Загрузка, обработка и хранение файлов и медиа                 | REST                  | MinIO / S3        |
+| **Collaboration Service**       | Совместное редактирование, WebSockets                         | WebSockets            | Redis             |
+| **Versioning Service**          | История изменений, откаты, Git-подобное версионирование       | REST/gRPC             | PostgreSQL (JSONB)|
+| **Import/Export Service**       | Конвертация (Markdown, LaTeX, PDF, Word)                      | REST                  | MinIO / S3        |
+| **Rendering Service**           | Генерация предпросмотров, mindmap, диаграмм                   | REST                  | Redis             |
+| **Cache Service**               | Кеширование документов, блоков, истории                       | Redis API             | Redis             |
+| **Permissions Service**         | Разграничение прав, роли пользователей в workspace/teamspace  | REST/gRPC             | PostgreSQL        |
+| **AI Assistance Service**       | Автокоррекция, анализ текста, NLP                             | Kafka / REST          | PostgreSQL / FAISS|
+
 
 ## Пользовательский путь и взаимодействие микросервисов
 
