@@ -2,49 +2,85 @@
 
 ## Воронов Даниил
 
-### **Teamspace**
-| **Атрибут** | **Тип** | **Описание** |
-|-------------|---------|--------------|
-| `id` | UUID | Уникальный идентификатор Teamspace |
-| `name` | String | Название команды |
-| `description` | Text | Описание команды |
-| `workspace_id` | UUID | ID связанного `Workspace` |
-| `created_at` | DateTime | Дата создания |
-| `updated_at` | DateTime | Дата последнего обновления |
+# **Обновленная архитектура данных для микросервиса Teamspaces**
+
+## **Teamspace**
+| Поле       | Тип                                           | Описание                                      | Особенности                                 |
+|------------|----------------------------------------------|-----------------------------------------------|---------------------------------------------|
+| id         | UUID                                         | Уникальный идентификатор                      | Primary Key                                 |
+| name       | VARCHAR(255)                                 | Название Teamspace                            | Unique                                      |
+| description| TEXT                                         | Описание Teamspace                            | Nullable                                    |
+| status     | ENUM(`active`, `archived`, `deleted`)        | Статус Teamspace                              | Default: `active`                           |
+| created_at | DATETIME                                     | Дата создания                                 | Auto timestamp                              |
+| updated_at | DATETIME                                     | Дата последнего обновления                    | Auto timestamp                              |
+| admins     | ManyToMany(User через `TeamspaceAdmin`)      | Пользователи-администраторы                   | Промежуточная таблица `TeamspaceAdmin`      |
 
 ---
 
-### **TeamMember**
-| **Атрибут** | **Тип** | **Описание** |
-|-------------|---------|--------------|
-| `id` | UUID | Уникальный идентификатор участника |
-| `user_id` | UUID | ID пользователя |
-| `teamspace` | FK (Teamspace) | Ссылка на связанный `Teamspace` |
-| `role` | FK (TeamRole) | Ссылка на роль участника |
-| `joined_at` | DateTime | Дата присоединения пользователя |
+## **TeamspaceAdmin**
+| Поле        | Тип    | Описание                               | Особенности                        |
+|-------------|--------|----------------------------------------|------------------------------------|
+| id          | UUID   | Уникальный идентификатор                | Primary Key                        |
+| teamspace_id| UUID   | ID Teamspace                            | Foreign Key → Teamspace(id)        |
+| user_id     | UUID   | ID пользователя (администратора)        | Foreign Key → User(id)             |
+| assigned_at | DATETIME | Дата назначения                        | Auto timestamp                     |
 
 ---
 
-### **TeamRole**
-| **Атрибут** | **Тип** | **Описание** |
-|-------------|---------|--------------|
-| `id` | UUID | Уникальный идентификатор роли |
-| `name` | String | Название роли (`admin`, `member`, `guest`) |
-| `description` | String | Описание роли |
+## **TeamspaceMember**
+| Поле        | Тип                                           | Описание                                | Особенности                                |
+|-------------|----------------------------------------------|-----------------------------------------|--------------------------------------------|
+| id          | UUID                                         | Уникальный идентификатор                | Primary Key                                |
+| teamspace_id| UUID                                         | ID Teamspace                             | Foreign Key → Teamspace(id)                |
+| user_id     | UUID                                         | ID пользователя                         | Foreign Key → User(id)                     |
+| role        | ENUM(`admin`, `member`, `guest`)             | Роль пользователя                        | Default: `member`                          |
+| joined_at   | DATETIME                                     | Дата присоединения                      | Auto timestamp                             |
 
 ---
 
-### **TeamInvite**
-| **Атрибут** | **Тип** | **Описание** |
-|-------------|---------|--------------|
-| `id` | UUID | Уникальный идентификатор приглашения |
-| `teamspace` | FK (Teamspace) | Ссылка на `Teamspace` |
-| `email` | String | Email приглашенного пользователя |
-| `invited_by` | UUID | ID пользователя, отправившего приглашение |
-| `role` | FK (TeamRole) | Предлагаемая роль |
-| `status` | Enum (`pending`, `accepted`, `declined`) | Статус приглашения |
-| `expires_at` | DateTime | Срок действия приглашения |
-| `created_at` | DateTime | Дата создания приглашения |
+## **TeamspaceSettings**
+| Поле                | Тип      | Описание                                      | Особенности                   |
+|---------------------|----------|-----------------------------------------------|--------------------------------|
+| id                  | UUID     | Уникальный идентификатор                      | Primary Key                    |
+| teamspace_id        | UUID     | ID Teamspace                                  | Foreign Key → Teamspace(id)    |
+| is_private          | BOOLEAN  | Приватный ли Teamspace                        | Default: `False`               |
+| enable_notifications| BOOLEAN  | Включены ли уведомления                        | Default: `True`                |
+
+---
+
+## **TeamspaceTag**
+| Поле        | Тип          | Описание                                      | Особенности                   |
+|-------------|--------------|-----------------------------------------------|--------------------------------|
+| id          | UUID         | Уникальный идентификатор                      | Primary Key                    |
+| teamspace_id| UUID         | ID Teamspace                                  | Foreign Key → Teamspace(id)    |
+| tag         | VARCHAR(100) | Тег Teamspace                                 | Unique                         |
+
+---
+
+## **TeamspaceInvite**
+| Поле        | Тип                                           | Описание                                      | Особенности                   |
+|-------------|----------------------------------------------|-----------------------------------------------|--------------------------------|
+| id          | UUID                                         | Уникальный идентификатор                      | Primary Key                    |
+| teamspace_id| UUID                                         | ID Teamspace                                  | Foreign Key → Teamspace(id)    |
+| email       | VARCHAR(255)                                 | Email приглашенного                          |                                |
+| invited_by_id| UUID                                        | ID пригласившего пользователя                 | Foreign Key → User(id)         |
+| role        | ENUM(`admin`, `member`, `guest`)             | Роль приглашаемого                            | Default: `member`              |
+| status      | ENUM(`pending`, `accepted`, `declined`)      | Статус приглашения                           | Default: `pending`             |
+| expires_at  | DATETIME                                     | Время истечения приглашения                   |                                |
+| created_at  | DATETIME                                     | Время создания                                | Auto timestamp                 |
+
+---
+
+## **TeamspaceHistory**
+| Поле        | Тип          | Описание                                      | Особенности                   |
+|-------------|--------------|-----------------------------------------------|--------------------------------|
+| id          | UUID         | Уникальный идентификатор                      | Primary Key                    |
+| teamspace_id| UUID         | ID Teamspace                                  | Foreign Key → Teamspace(id)    |
+| user_id     | UUID         | ID пользователя, совершившего действие         | Foreign Key → User(id)         |
+| action      | VARCHAR(255) | Описание действия                             |                                |
+| timestamp   | DATETIME     | Время выполнения действия                     | Auto timestamp                 |
+
+
 
 # **20 рекомендаций по улучшению архитектуры данных в микросервисе Teamspaces**
 
