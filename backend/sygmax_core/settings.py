@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'apps.authentication.apps.AuthenticationConfig',
     'apps.profiles',
     'apps.workspaces',
-    'apps.teamspaces',
 ]
 
 MIDDLEWARE = [
