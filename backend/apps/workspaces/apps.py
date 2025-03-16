@@ -5,4 +5,7 @@ class WorkspacesConfig(AppConfig):
     name = 'apps.workspaces'
 
     def ready(self):
-        import apps.workspaces.infrastructure.models
+        try:
+            import apps.workspaces.models
+        except ImportError:
+            pass
