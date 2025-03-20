@@ -1,76 +1,86 @@
-# 🎯 **`Sygmax Profile` (Микросервис `profiles`)**
-
-### 📄 **Таблица: `UserProfile`**
-
-| **Поле**                | **Тип**   | **Описание**                                       | **Ключи / Связи**                |
-|-------------------------|-----------|----------------------------------------------------|----------------------------------|
-| `id`                    | UUID      | Уникальный идентификатор                           | Primary Key                      |
-| `user_id`               | UUID      | Связь с `User` из `Sygmax Auth`                    | One-to-One                       |
-| `full_name`             | String    | Полное имя                                         | -                                |
-| `avatar`                | Image     | Аватар пользователя                                | -                                |
-| `bio`                   | Text      | Биография                                          | -                                |
-| `language`              | String    | Язык интерфейса                                    | -                                |
-| `timezone`              | String    | Часовой пояс                                       | -                                |
-| `theme`                 | String    | Тема интерфейса (light/dark)                       | -                                |
-| `email_notifications`   | Boolean   | Получение уведомлений по email                     | -                                |
-| `push_notifications`    | Boolean   | Получение push-уведомлений                         | -                                |
-| `created_at`            | DateTime  | Дата создания профиля                              | -                                |
-| `updated_at`            | DateTime  | Дата последнего обновления профиля                 | -                                |
-
----
-
 # 🎯 **`Sygmax Workspaces` (Микросервис `workspaces`)**
 
-### 📄 **Таблица: `Workspace`**
-
-| **Поле**       | **Тип**    | **Описание**                             | **Ключи / Связи**                             |
-|----------------|------------|------------------------------------------|----------------------------------------------|
-| `id`           | UUID        | Уникальный идентификатор                 | Primary Key                                  |
-| `name`         | String      | Название воркспейса                      | -                                            |
-| `description`  | Text        | Описание воркспейса                      | -                                            |
-| `owner_id`     | UUID        | Владелец воркспейса                      | Foreign Key → `User (Sygmax Auth)`           |
-| `is_personal`  | Boolean     | Является ли воркспейс персональным       | -                                            |
-| `created_at`   | DateTime    | Дата создания воркспейса                 | -                                            |
-| `updated_at`   | DateTime    | Дата последнего обновления воркспейса    | -                                            |
-
----
-
-### 📄 **Таблица: `WorkspaceMember`**
-
-| **Поле**       | **Тип**    | **Описание**                             | **Ключи / Связи**                             |
-|----------------|------------|------------------------------------------|----------------------------------------------|
-| `id`           | UUID        | Уникальный идентификатор                 | Primary Key                                  |
-| `user_id`      | UUID        | Участник воркспейса                      | Foreign Key → `User (Sygmax Auth)`           |
-| `workspace_id` | UUID        | Воркспейс                                | Foreign Key → `Workspace`                    |
-| `role`         | String      | Роль участника (`admin`, `editor`, `viewer`) | -                                         |
-| `joined_at`    | DateTime    | Дата присоединения к воркспейсу          | -                                            |
+## **1. Workspace** (Основная сущность)
+| Поле        | Тип                                      | Описание                           | Особенности                         |
+|------------|-----------------------------------------|------------------------------------|-------------------------------------|
+| id         | UUID                                    | Уникальный идентификатор          | Primary Key                         |
+| name       | VARCHAR(255)                            | Название Workspace                | Unique                              |
+| description| TEXT                                    | Описание Workspace                | Nullable                            |
+| status     | ENUM(`active`, `archived`, `deleted`)   | Статус Workspace                  | Default: `active`                   |
+| owner_id   | UUID                                    | Владелец Workspace                | Foreign Key → User(id)              |
+| created_at | DATETIME                                | Дата создания                     | Auto timestamp                      |
+| updated_at | DATETIME                                | Дата последнего обновления        | Auto timestamp                      |
 
 ---
 
-### 📄 **Таблица: `WorkspaceInvite`**
-
-| **Поле**       | **Тип**    | **Описание**                             | **Ключи / Связи**                             |
-|----------------|------------|------------------------------------------|----------------------------------------------|
-| `id`           | UUID        | Уникальный идентификатор                 | Primary Key                                  |
-| `workspace_id` | UUID        | Воркспейс                                | Foreign Key → `Workspace`                    |
-| `email`        | String      | Email приглашенного пользователя         | -                                            |
-| `invited_by`   | UUID        | Кто отправил приглашение                 | Foreign Key → `User (Sygmax Auth)`           |
-| `role`         | String      | Предлагаемая роль                         | -                                            |
-| `status`       | String      | Статус приглашения (`pending`, `accepted`, `declined`) | -                                    |
-| `expires_at`   | DateTime    | Срок действия приглашения                | -                                            |
-| `created_at`   | DateTime    | Дата создания приглашения                | -                                            |
+## **2. ArchivedWorkspace** (Архивированные Workspace)
+| Поле        | Тип      | Описание                                         | Особенности                        |
+|------------|---------|-------------------------------------------------|------------------------------------|
+| id         | UUID    | Уникальный идентификатор                         | Primary Key                        |
+| workspace_id | UUID  | ID Workspace, который был архивирован            | Foreign Key → Workspace(id)        |
+| archived_by | UUID   | ID пользователя, который инициировал архивирование | Foreign Key → User(id)            |
+| archived_at | DATETIME | Дата архивирования                              | Auto timestamp                     |
+| reason     | TEXT    | Причина архивирования (опционально)              | Nullable                           |
 
 ---
 
-# 🚀 **Ключевые связи между микросервисами**
-
-- **`User (Sygmax Auth)`** 🔗 **`UserProfile (Sygmax Profile)`** → `One-to-One` (у каждого пользователя только один профиль).  
-- **`User (Sygmax Auth)`** 🔗 **`Workspace (Sygmax Workspaces)`** → `One-to-Many` (один пользователь может владеть несколькими воркспейсами).  
-- **`User (Sygmax Auth)`** 🔗 **`WorkspaceMember (Sygmax Workspaces)`** → `Many-to-Many` (один пользователь может быть участником нескольких воркспейсов).  
-- **`Workspace (Sygmax Workspaces)`** 🔗 **`WorkspaceInvite (Sygmax Workspaces)`** → `One-to-Many` (один воркспейс может иметь несколько приглашений).
+## **3. WorkspaceMember** (Связь пользователей с Workspace)
+| Поле         | Тип       | Описание                       | Особенности                                |
+|-------------|----------|--------------------------------|--------------------------------------------|
+| id          | UUID     | Уникальный идентификатор       | Primary Key                                |
+| workspace_id| UUID     | ID Workspace                   | Foreign Key → Workspace(id)                |
+| user_id     | UUID     | ID пользователя                | Foreign Key → User(id)                     |
+| role_id     | UUID     | ID роли                        | Foreign Key → WorkspaceRole(id)            |
+| joined_at   | DATETIME | Дата присоединения             | Auto timestamp                             |
 
 ---
 
-Теперь данные **четко разделены** по микросервисам.  
-✅ Если структура **подходит**, можно двигаться дальше — к созданию миграций, API или настройке логики работы.
+## **4. WorkspaceRole** (Роли в Workspace)
+| Поле       | Тип        | Описание                         | Особенности                     |
+|-----------|-----------|---------------------------------|---------------------------------|
+| id        | UUID      | Уникальный идентификатор         | Primary Key                     |
+| name      | VARCHAR(50) | Название роли                   | Unique                          |
 
+---
+
+## **5. WorkspaceSettings** (Настройки Workspace)
+| Поле                | Тип      | Описание                                      | Особенности                   |
+|---------------------|----------|-----------------------------------------------|--------------------------------|
+| id                  | UUID     | Уникальный идентификатор                      | Primary Key                    |
+| workspace_id        | UUID     | ID Workspace                                  | Foreign Key → Workspace(id)    |
+| is_private          | BOOLEAN  | Приватный ли Workspace                        | Default: `False`               |
+| enable_notifications| BOOLEAN  | Включены ли уведомления                        | Default: `True`                |
+
+---
+
+## **6. WorkspaceTag** (Теги для Workspace)
+| Поле        | Тип          | Описание                                      | Особенности                   |
+|-------------|--------------|-----------------------------------------------|--------------------------------|
+| id          | UUID         | Уникальный идентификатор                      | Primary Key                    |
+| workspace_id| UUID         | ID Workspace                                  | Foreign Key → Workspace(id)    |
+| tag         | VARCHAR(100) | Тег Workspace                                 | Unique                         |
+
+---
+
+## **7. WorkspaceInvite** (Приглашения в Workspace)
+| Поле        | Тип                                           | Описание                                      | Особенности                   |
+|-------------|----------------------------------------------|-----------------------------------------------|--------------------------------|
+| id          | UUID                                         | Уникальный идентификатор                      | Primary Key                    |
+| workspace_id| UUID                                         | ID Workspace                                  | Foreign Key → Workspace(id)    |
+| email       | VARCHAR(255)                                 | Email приглашенного                          |                                |
+| invited_by_id| UUID                                        | ID пригласившего пользователя                 | Foreign Key → User(id)         |
+| role_id     | UUID                                         | ID роли приглашённого                        | Foreign Key → WorkspaceRole(id)|
+| status      | ENUM(`pending`, `accepted`, `declined`)      | Статус приглашения                           | Default: `pending`             |
+| expires_at  | DATETIME                                     | Время истечения приглашения                   |                                |
+| created_at  | DATETIME                                     | Время создания                                | Auto timestamp                 |
+
+---
+
+## **8. WorkspaceHistory** (История действий в Workspace)
+| Поле        | Тип          | Описание                                      | Особенности                   |
+|-------------|--------------|-----------------------------------------------|--------------------------------|
+| id          | UUID         | Уникальный идентификатор                      | Primary Key                    |
+| workspace_id| UUID         | ID Workspace                                  | Foreign Key → Workspace(id)    |
+| user_id     | UUID         | ID пользователя, совершившего действие         | Foreign Key → User(id)         |
+| action      | VARCHAR(255) | Описание действия                             |                                |
+| timestamp   | DATETIME     | Время выполнения действия                     | Auto timestamp                 |
