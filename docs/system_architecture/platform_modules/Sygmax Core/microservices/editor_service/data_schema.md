@@ -4,7 +4,7 @@
 | Поле              | Тип          | Описание                                        | Особенности                     |
 |-------------------|-------------|------------------------------------------------|---------------------------------|
 | id               | UUID         | Уникальный идентификатор документа              | Primary Key                     |
-| object           | ENUM(`document`) | Тип объекта                              | Default: `document`             |
+| object_type      | ENUM(`document`) | Тип объекта (всегда `document`) | Default: `document`           |
 | title            | VARCHAR(255) | Название документа                              |                                 |
 | description      | TEXT         | Описание документа                             | Nullable                        |
 | cover           | VARCHAR(500) | Путь к обложке документа (S3)                   | Nullable                        |
@@ -12,7 +12,8 @@
 | owner_id         | UUID         | ID владельца документа                          | Foreign Key → User(id)          |
 | workspace_id     | UUID         | ID воркспейса, в котором находится документ     | Foreign Key → Workspace(id)     |
 | teamspace_id     | UUID         | ID Teamspace, если документ привязан к команде | Nullable, Foreign Key → Teamspace(id) |
-| parent_object_id | UUID         | Родительский объект документа                  | Nullable, Foreign Key → Document(id) |
+| parent_object_id | UUID         | ID родительского объекта                        | Nullable, Foreign Key → Document(id) или Database(id) |
+| parent_object_type | ENUM(`document`, `database`) | Тип родительского объекта | Nullable |
 | is_public        | BOOLEAN      | Доступен ли документ публично                   | Default: `False`                |
 | archived         | BOOLEAN      | Архивирован ли документ                         | Default: `False`                |
 | in_trash         | BOOLEAN      | Находится ли документ в корзине                 | Default: `False`                |
@@ -20,7 +21,6 @@
 | public_url       | VARCHAR(500) | Публичный URL (если доступ открыт)              | Nullable                        |
 | created_at       | DATETIME     | Дата создания                                   | Auto timestamp                   |
 | updated_at       | DATETIME     | Дата последнего обновления                      | Auto timestamp                   |
-
 
 ---
 
