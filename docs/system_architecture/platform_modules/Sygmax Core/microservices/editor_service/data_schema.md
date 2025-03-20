@@ -1,19 +1,26 @@
 # **Editor Microservice Schema**
 
-## Воронов Даниил
+## **Document**
+| Поле              | Тип          | Описание                                        | Особенности                     |
+|-------------------|-------------|------------------------------------------------|---------------------------------|
+| id               | UUID         | Уникальный идентификатор документа              | Primary Key                     |
+| object           | ENUM(`document`) | Тип объекта                              | Default: `document`             |
+| title            | VARCHAR(255) | Название документа                              |                                 |
+| description      | TEXT         | Описание документа                             | Nullable                        |
+| cover           | VARCHAR(500) | Путь к обложке документа (S3)                   | Nullable                        |
+| icon            | VARCHAR(500) | Путь к иконке документа (S3)                    | Nullable                        |
+| owner_id         | UUID         | ID владельца документа                          | Foreign Key → User(id)          |
+| workspace_id     | UUID         | ID воркспейса, в котором находится документ     | Foreign Key → Workspace(id)     |
+| teamspace_id     | UUID         | ID Teamspace, если документ привязан к команде | Nullable, Foreign Key → Teamspace(id) |
+| parent_object_id | UUID         | Родительский объект документа                  | Nullable, Foreign Key → Document(id) |
+| is_public        | BOOLEAN      | Доступен ли документ публично                   | Default: `False`                |
+| archived         | BOOLEAN      | Архивирован ли документ                         | Default: `False`                |
+| in_trash         | BOOLEAN      | Находится ли документ в корзине                 | Default: `False`                |
+| url              | VARCHAR(500) | Внутренний URL для ссылки на документ           | Auto-generated                  |
+| public_url       | VARCHAR(500) | Публичный URL (если доступ открыт)              | Nullable                        |
+| created_at       | DATETIME     | Дата создания                                   | Auto timestamp                   |
+| updated_at       | DATETIME     | Дата последнего обновления                      | Auto timestamp                   |
 
-### **Document**
-| Поле        | Тип          | Описание                                       | Особенности |
-|-------------|-------------|-----------------------------------------------|-------------|
-| id          | UUID        | Уникальный идентификатор документа             | Primary Key |
-| title       | VARCHAR(255)| Название документа                            | |
-| description | TEXT        | Описание документа                           | Nullable |
-| owner_id    | UUID        | ID владельца документа                        | Foreign Key → User(id) |
-| workspace_id| UUID        | ID воркспейса, в котором находится документ   | Foreign Key → Workspace(id) |
-| teamspace_id| UUID        | ID Teamspace, если документ привязан к команде | Nullable, Foreign Key → Teamspace(id) |
-| is_public   | BOOLEAN     | Доступен ли документ публично                 | Default: `False` |
-| created_at  | DATETIME    | Дата создания                                 | Auto timestamp |
-| updated_at  | DATETIME    | Дата последнего обновления                    | Auto timestamp |
 
 ---
 
