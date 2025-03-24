@@ -1,4 +1,3 @@
-
 from django.db import models
 
 import uuid
@@ -7,7 +6,7 @@ from django.utils import timezone
 
   
 
-# Модель воркспейса
+# Модель тимспейса
 
 class Teamspace(models.Model):
     class StatusChoices(models.TextChoices):
@@ -20,11 +19,11 @@ class Teamspace(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название тимспейса')
     description = models.TextField(verbose_name='Описание тимспейса', blank=True)
     owner_id = models.UUIDField(verbose_name='Владелец тимспейсы', null=True)
-    status = models.CharField(choices=StatusChoices.choices)
+    status = models.CharField(max_length=20, choices=StatusChoices.choices)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-# Участники воркспейса
+# Участники тимспейса
 
 class TeamspaceMember(models.Model):
     class RoleChoices(models.TextChoices):
@@ -43,7 +42,7 @@ class TeamspaceMember(models.Model):
 
   
 
-# Приглашения в воркспейс
+# Приглашения в тимспейс
 
 class TeamspaceInvite(models.Model):
 
@@ -72,7 +71,7 @@ class ArchivedTeamspace(models.Model):
 
 class TeamspaceRole(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(unique=True)
+    name = models.CharField(max_length=255, unique=True)
 
 
 class TeamspaceSettings(models.Model):
@@ -91,5 +90,5 @@ class TeampaceHistory(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     teamspace = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name='history')
     user_id = models.UUIDField()
-    action = models.CharField(max_lenght=255)
+    action = models.CharField(max_length=255)
     timestamp = models.DateTimeField(default=timezone.now)
