@@ -44,3 +44,37 @@ class WorkspaceInvite(models.Model):
     expires_at = models.DateTimeField(verbose_name='Срок действия')
     created_at = models.DateTimeField(default=timezone.now)
 
+
+class ArchivedWorkspace(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='archive')
+    archived_by = models.UUIDField()
+    archived_at = models.DateTimeField(default=timezone.now)
+    reason = models.TextField(null=True)
+
+
+class WorkspaceRole(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(unique=True)
+
+  
+
+class WorkspaceSettings(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='settings')
+    is_private = models.BooleanField(default=False)
+    enable_notifications = models.BooleanField(default=True)
+
+  
+
+class WorkspaceTag(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='tag')
+    tag = models.CharField(max_length=100, unique=True)
+
+class WorkspaceHistory(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='history')
+    user_id = models.UUIDField()
+    action = models.CharField(max_lenght=255)
+    timestamp = models.DateTimeField(default=timezone.now)
