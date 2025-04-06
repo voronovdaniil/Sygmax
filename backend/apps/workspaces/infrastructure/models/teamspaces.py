@@ -18,7 +18,7 @@ class Teamspace(models.Model):
     workspace_id = models.UUIDField()
     name = models.CharField(max_length=255, verbose_name='Название тимспейса')
     description = models.TextField(verbose_name='Описание тимспейса', blank=True)
-    owner_id = models.UUIDField(verbose_name='Владелец тимспейсы', null=True)
+    owner_id = models.UUIDField(verbose_name='Владелец тимспейса', null=True)
     status = models.CharField(max_length=20, choices=StatusChoices.choices)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
