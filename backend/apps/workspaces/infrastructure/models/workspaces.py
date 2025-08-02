@@ -1,40 +1,15 @@
+from mptt.models import MPTTModel, TreeForeignKey
 from django.db import models
 import uuid
 from django.utils import timezone
 from django.conf import settings
-
-# 1. Основная сущность Workspace
-class Workspace(models.Model):
-    STATUS_CHOICES = [
-        ('active', 'Active'),
-        ('archived', 'Archived'),
-        ('deleted', 'Deleted'),
-    ]
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, unique=True, verbose_name="Название Workspace")
-    description = models.TextField(blank=True, null=True, verbose_name="Описание Workspace")
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active', verbose_name="Статус")
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
-        related_name="owned_workspaces"
-    )
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Workspace"
-        verbose_name_plural = "Workspaces"
-
-    def __str__(self):
-        return self.name
+from node import Node
 
 
 # 2. Архивированные Workspaces
 class ArchivedWorkspace(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    workspace = models.OneToOneField(Workspace, on_delete=models.CASCADE, related_name="archived_info")
+    node = models.OneToOneField(Node, on_delete=models.CASCADE, related_name="archived_info")
     archived_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     archived_at = models.DateTimeField(default=timezone.now)
     reason = models.TextField(blank=True, null=True, verbose_name="Причина архивирования")

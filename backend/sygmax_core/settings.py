@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'apps.authentication.apps.AuthenticationConfig',
     'apps.profiles',
     'apps.workspaces',
+    'mptt'
 ]
 
 MIDDLEWARE = [
